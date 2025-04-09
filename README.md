@@ -40,7 +40,7 @@ The application follows a clean separation of concerns with the following compon
 1. **Clone the repository**
 
 ```bash
-git clone https://github.com/yourusername/CSL_API_App.git
+git clone https://github.com/phreck/CSL_API_App.git
 cd CSL_API_App
 ```
 
@@ -115,7 +115,7 @@ For a containerized setup using Docker:
 1. **Clone the repository**
 
 ```bash
-git clone https://github.com/yourusername/CSL_API_App.git
+git clone https://github.com/phreck/CSL_API_App.git
 cd CSL_API_App
 ```
 
@@ -246,4 +246,4 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## 📧 Contact
 
-Project Link: [https://github.com/yourusername/CSL_API_App](https://github.com/yourusername/CSL_API_App)
+Project Link: [https://github.com/phreck/CSL_API_App](https://github.com/phreck/CSL_API_App)
