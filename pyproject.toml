@@ -1,0 +1,28 @@
+[project]
+name = "csl-api-app"
+version = "0.1.0"
+description = "Django application for interacting with Consolidated Screening List API"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "django>=5.0.0",
+    "djangorestframework>=3.14.0",
+    "psycopg2-binary>=2.9.9",
+    "requests>=2.31.0",
+    "python-dotenv>=1.0.0",
+    "django-cors-headers>=4.3.1",
+    "django-filter>=25.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-django>=4.7.0",
+    "black>=23.9.1",
+    "isort>=5.12.0",
+    "flake8>=6.1.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build_backend"

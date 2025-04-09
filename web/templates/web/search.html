@@ -1,0 +1,245 @@
+{% extends "web/base.html" %}
+
+{% block title %}Search - CSL API Application{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Search Consolidated Screening List</h1>
+
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Search Options</h5>
+            </div>
+            <div class="card-body">
+                <form action="{% url 'web:search' %}" method="get">
+                    <div class="mb-3">
+                        <label for="q" class="form-label">Search Query</label>
+                        <input type="text" class="form-control" id="q" name="q" value="{{ query }}" placeholder="Enter name or keyword" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="source_list" class="form-label">Source List</label>
+                        <select class="form-select" id="source_list" name="source_list">
+                            <option value="">All Source Lists</option>
+                            {% for source in csl_sources %}
+                                <option value="{{ source.code }}" {% if source_list == source.code %}selected{% endif %}>
+                                    {{ source.code }} - {{ source.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        <div class="form-text" id="sourceHelp">
+                            <small id="sourceHelpText">Select a specific screening list</small>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="entity_type" class="form-label">Entity Type</label>
+                        <select class="form-select" id="entity_type" name="entity_type">
+                            <option value="">All Types</option>
+                            {% for type in entity_types %}
+                                <option value="{{ type.code }}" {% if entity_type == type.code %}selected{% endif %}>{{ type.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="country" class="form-label">Country</label>
+                        <select class="form-select" id="country" name="country">
+                            <option value="">All Countries</option>
+                            {% for country_name in countries %}
+                                <option value="{{ country_name }}" {% if country == country_name %}selected{% endif %}>{{ country_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <!-- Address Related Fields (collapsible) -->
+                    <div class="mb-3">
+                        <a class="btn btn-outline-secondary btn-sm w-100" data-bs-toggle="collapse" href="#addressOptions" role="button" aria-expanded="false">
+                            Address Options <i class="bi bi-chevron-down"></i>
+                        </a>
+                        <div class="collapse mt-2" id="addressOptions">
+                            <div class="card card-body">
+                                <div class="mb-2">
+                                    <label for="address" class="form-label">Address</label>
+                                    <input type="text" class="form-control" id="address" name="address" value="{{ address }}" placeholder="Street address">
+                                </div>
+                                <div class="mb-2">
+                                    <label for="city" class="form-label">City</label>
+                                    <input type="text" class="form-control" id="city" name="city" value="{{ city }}" placeholder="City">
+                                </div>
+                                <div class="mb-2">
+                                    <label for="state" class="form-label">State/Province</label>
+                                    <input type="text" class="form-control" id="state" name="state" value="{{ state }}" placeholder="State or province">
+                                </div>
+                                <div class="mb-2">
+                                    <label for="postal_code" class="form-label">Postal Code</label>
+                                    <input type="text" class="form-control" id="postal_code" name="postal_code" value="{{ postal_code }}" placeholder="Postal code">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="use_api" name="use_api" {% if use_api %}checked{% endif %}>
+                        <label class="form-check-label" for="use_api">
+                            Search using external CSL API
+                        </label>
+                    </div>
+
+                    <div class="text-center mt-3">
+                        <button type="submit" class="btn btn-primary w-100">Search</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        <div class="card shadow-sm mb-3">
+            <div class="card-header bg-light">
+                <h5 class="mb-0">Search Results</h5>
+            </div>
+            <div class="card-body">
+                {% if query %}
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h2>Results for "{{ query }}"</h2>
+                        <span class="badge bg-primary">{{ total_results }} results</span>
+                    </div>
+
+                    {% if entities %}
+                        {% for entity in entities %}
+                            <div class="card shadow-sm mb-3 entity-card">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div>
+                                            <h4 class="card-title">{{ entity.name }}</h4>
+                                            <h6 class="card-subtitle mb-2 text-muted">{{ entity.source_list }}</h6>
+                                        </div>
+                                        {% if entity.score %}
+                                        <span class="badge bg-info">Relevance: {{ entity.score }}</span>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div class="row mt-2">
+                                        <div class="col-md-6">
+                                            {% if entity.addresses.all %}
+                                                <p class="mb-1"><strong>Addresses:</strong></p>
+                                                <ul class="list-unstyled">
+                                                    {% for address in entity.addresses.all %}
+                                                        <li>{{ address }}</li>
+                                                    {% endfor %}
+                                                </ul>
+                                            {% endif %}
+                                        </div>
+                                        <div class="col-md-6">
+                                            {% if entity.programs %}
+                                                <p class="mb-1"><strong>Programs:</strong></p>
+                                                {% for program in entity.programs %}
+                                                    <span class="badge bg-secondary">{{ program }}</span>
+                                                {% endfor %}
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mt-3">
+                                        <a href="{% url 'web:entity_detail' entity.id %}" class="btn btn-sm btn-outline-primary">View Details</a>
+                                        {% if entity.source_information_url %}
+                                            <a href="{{ entity.source_information_url }}" class="btn btn-sm btn-outline-secondary" target="_blank">Source Information</a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+
+                        <!-- Pagination -->
+                        {% if entities.paginator.num_pages > 1 %}
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination justify-content-center">
+                                {% if entities.has_previous %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?q={{ query }}&page=1&source_list={{ source_list }}&entity_type={{ entity_type }}&country={{ country }}&address={{ address }}&city={{ city }}&state={{ state }}&postal_code={{ postal_code }}&use_api={% if use_api %}on{% endif %}" aria-label="First">
+                                            <span aria-hidden="true">&laquo;&laquo;</span>
+                                        </a>
+                                    </li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="?q={{ query }}&page={{ entities.previous_page_number }}&source_list={{ source_list }}&entity_type={{ entity_type }}&country={{ country }}&address={{ address }}&city={{ city }}&state={{ state }}&postal_code={{ postal_code }}&use_api={% if use_api %}on{% endif %}" aria-label="Previous">
+                                            <span aria-hidden="true">&laquo;</span>
+                                        </a>
+                                    </li>
+                                {% endif %}
+
+                                {% for num in entities.paginator.page_range %}
+                                    {% if entities.number == num %}
+                                        <li class="page-item active"><a class="page-link" href="#">{{ num }}</a></li>
+                                    {% elif num > entities.number|add:'-3' and num < entities.number|add:'3' %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="?q={{ query }}&page={{ num }}&source_list={{ source_list }}&entity_type={{ entity_type }}&country={{ country }}&address={{ address }}&city={{ city }}&state={{ state }}&postal_code={{ postal_code }}&use_api={% if use_api %}on{% endif %}">{{ num }}</a>
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+
+                                {% if entities.has_next %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?q={{ query }}&page={{ entities.next_page_number }}&source_list={{ source_list }}&entity_type={{ entity_type }}&country={{ country }}&address={{ address }}&city={{ city }}&state={{ state }}&postal_code={{ postal_code }}&use_api={% if use_api %}on{% endif %}" aria-label="Next">
+                                            <span aria-hidden="true">&raquo;</span>
+                                        </a>
+                                    </li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="?q={{ query }}&page={{ entities.paginator.num_pages }}&source_list={{ source_list }}&entity_type={{ entity_type }}&country={{ country }}&address={{ address }}&city={{ city }}&state={{ state }}&postal_code={{ postal_code }}&use_api={% if use_api %}on{% endif %}" aria-label="Last">
+                                            <span aria-hidden="true">&raquo;&raquo;</span>
+                                        </a>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </nav>
+                        {% endif %}
+                        
+                    {% else %}
+                        <div class="alert alert-info">
+                            <h5>No results found for "{{ query }}"</h5>
+                            <p>Try adjusting your search terms or using the external CSL API option.</p>
+                        </div>
+                    {% endif %}
+                {% else %}
+                    <div class="text-center py-4">
+                        <h3>Enter a search query</h3>
+                        <p class="text-muted">Use the search form on the left to find entities in the Consolidated Screening List.</p>
+                        <i class="bi bi-search" style="font-size: 3rem;"></i>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Display a helpful message when using the external API -->
+        {% if use_api %}
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle-fill me-2"></i>
+            <strong>Using external CSL API</strong>: Results are being fetched from the Consolidated Screening List API and saved to the local database.
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Auto-focus the search input field
+        const searchInput = document.getElementById('q');
+        if (searchInput) {
+            searchInput.focus();
+        }
+
+        // Add loading indicator on search
+        const searchForm = document.querySelector('form');
+        if (searchForm) {
+            searchForm.addEventListener('submit', function() {
+                const submitBtn = this.querySelector('button[type="submit"]');
+                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Searching...';
+                submitBtn.disabled = true;
+            });
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,157 @@
+{% extends "web/base.html" %}
+
+{% block title %}About - CSL API Application{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h1 class="mb-0">About the Consolidated Screening List API</h1>
+            </div>
+            <div class="card-body">
+                <h2>What is the Consolidated Screening List?</h2>
+                <p class="lead">
+                    The Consolidated Screening List (CSL) is a list of parties for which the United States Government 
+                    maintains restrictions on certain exports, reexports, or transfers of items.
+                </p>
+
+                <hr>
+
+                <h3>Overview</h3>
+                <p>
+                    The Consolidated Screening List API consolidates export screening lists of the Departments of Commerce, 
+                    State, and the Treasury into a single searchable database. It contains the names of restricted and 
+                    denied parties with whom U.S. companies and individuals are prohibited or restricted from doing business.
+                </p>
+
+                <h3>Source Lists</h3>
+                <p>The CSL includes data from the following lists:</p>
+                
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="card mb-3">
+                            <div class="card-header bg-light">Department of Commerce</div>
+                            <div class="card-body">
+                                <ul>
+                                    <li>Denied Persons List</li>
+                                    <li>Unverified List</li>
+                                    <li>Entity List</li>
+                                    <li>Military End User (MEU) List</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="card mb-3">
+                            <div class="card-header bg-light">Department of State</div>
+                            <div class="card-body">
+                                <ul>
+                                    <li>AECA Debarred List</li>
+                                    <li>Nonproliferation Sanctions</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="card mb-3">
+                            <div class="card-header bg-light">Department of the Treasury</div>
+                            <div class="card-body">
+                                <ul>
+                                    <li>Specially Designated Nationals (SDN) List</li>
+                                    <li>Foreign Sanctions Evaders List</li>
+                                    <li>Sectoral Sanctions Identifications List</li>
+                                    <li>Palestinian Legislative Council List</li>
+                                    <li>CAPTA List</li>
+                                    <li>Non-SDN Menu-Based Sanctions List</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <h3>About This Application</h3>
+                <p>
+                    This application provides a user-friendly interface for searching the Consolidated Screening List 
+                    and viewing detailed information about entities. It also offers a RESTful API for programmatic access 
+                    to the CSL data.
+                </p>
+                
+                <p>Key features include:</p>
+                <ul>
+                    <li>Search entities by name, source list, and country</li>
+                    <li>View detailed entity information including addresses and identification documents</li>
+                    <li>Query the live Trade.gov CSL API directly</li>
+                    <li>Local PostgreSQL database for storing and retrieving entity data</li>
+                    <li>RESTful API for integration with other applications</li>
+                </ul>
+
+                <h3>API Documentation</h3>
+                <p>
+                    The REST API of this application allows you to programmatically access the CSL data. 
+                    The following endpoints are available:
+                </p>
+
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Endpoint</th>
+                            <th>Description</th>
+                            <th>Methods</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>/api/v1/entities/</code></td>
+                            <td>List all entities or create a new entity</td>
+                            <td>GET, POST</td>
+                        </tr>
+                        <tr>
+                            <td><code>/api/v1/entities/{id}/</code></td>
+                            <td>Retrieve, update, or delete a specific entity</td>
+                            <td>GET, PUT, PATCH, DELETE</td>
+                        </tr>
+                        <tr>
+                            <td><code>/api/v1/entities/search/</code></td>
+                            <td>Search entities in the local database</td>
+                            <td>GET</td>
+                        </tr>
+                        <tr>
+                            <td><code>/api/v1/entities/external_search/</code></td>
+                            <td>Search entities using the external CSL API</td>
+                            <td>GET</td>
+                        </tr>
+                        <tr>
+                            <td><code>/api/v1/entities/source_lists/</code></td>
+                            <td>Get a list of all source lists</td>
+                            <td>GET</td>
+                        </tr>
+                        <tr>
+                            <td><code>/api/v1/addresses/</code></td>
+                            <td>List all addresses</td>
+                            <td>GET</td>
+                        </tr>
+                        <tr>
+                            <td><code>/api/v1/addresses/countries/</code></td>
+                            <td>Get a list of all countries</td>
+                            <td>GET</td>
+                        </tr>
+                        <tr>
+                            <td><code>/api/v1/search-history/</code></td>
+                            <td>View search history</td>
+                            <td>GET</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div class="mt-4">
+                    <a href="https://www.trade.gov/consolidated-screening-list" class="btn btn-primary" target="_blank">Official CSL Website</a>
+                    <a href="/api/v1/" class="btn btn-secondary" target="_blank">Browse API</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

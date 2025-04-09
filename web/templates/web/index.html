@@ -1,0 +1,83 @@
+{% extends "web/base.html" %}
+
+{% block title %}Home - CSL API Application{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h1 class="display-5">Consolidated Screening List Application</h1>
+                <p class="lead">
+                    Search and interact with the U.S. Government Consolidated Screening List API.
+                </p>
+
+                <form action="{% url 'web:search' %}" method="get" class="mt-4">
+                    <div class="input-group input-group-lg">
+                        <input type="text" name="q" class="form-control" placeholder="Search for entities...">
+                        <button class="btn btn-primary" type="submit">Search</button>
+                    </div>
+                    <div class="form-check mt-2">
+                        <input class="form-check-input" type="checkbox" name="use_api" id="use_api">
+                        <label class="form-check-label" for="use_api">
+                            Search using external CSL API (may be slower)
+                        </label>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <h2 class="mb-3">Recent Entities</h2>
+        {% if latest_entities %}
+            <div class="row">
+                {% for entity in latest_entities %}
+                <div class="col-md-6">
+                    <div class="card entity-card shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ entity.name }}</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">{{ entity.source_list }}</h6>
+                            <p class="card-text">
+                                {% if entity.programs %}
+                                Programs: 
+                                {% for program in entity.programs %}
+                                    <span class="badge bg-secondary">{{ program }}</span>
+                                {% endfor %}
+                                {% endif %}
+                            </p>
+                            <a href="{% url 'web:entity_detail' entity.id %}" class="btn btn-sm btn-outline-primary">View Details</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="alert alert-info">
+                No entities found in the database yet. Start by performing a search.
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="col-md-4">
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="card-title mb-0">Database Statistics</h5>
+            </div>
+            <div class="card-body">
+                <p>Total Entities: <strong>{{ total_entities }}</strong></p>
+                <p>Total Searches: <strong>{{ total_searches }}</strong></p>
+                <p>Available Source Lists: <strong>{{ source_lists|length }}</strong></p>
+            </div>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h5 class="card-title mb-0">About CSL</h5>
+            </div>
+            <div class="card-body">
+                <p>The Consolidated Screening List (CSL) is a list of parties for which the United States Government maintains restrictions on certain exports, reexports, or transfers of items.</p>
+                <a href="{% url 'web:about' %}" class="btn btn-outline-primary">Learn More</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

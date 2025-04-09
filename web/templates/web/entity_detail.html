@@ -1,0 +1,158 @@
+{% extends "web/base.html" %}
+
+{% block title %}{{ entity.name }} - CSL API Application{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'web:index' %}">Home</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'web:search' %}">Search</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Entity Details</li>
+            </ol>
+        </nav>
+        
+        <div class="card shadow mb-4">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <h2 class="mb-0">{{ entity.name }}</h2>
+                <span class="badge bg-light text-primary">{{ entity.source_list }}</span>
+            </div>
+            <div class="card-body">
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h4>Basic Information</h4>
+                        <table class="table table-striped">
+                            <tbody>
+                                <tr>
+                                    <th scope="row">Entity Number</th>
+                                    <td>{{ entity.entity_number|default:"Not provided" }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Type</th>
+                                    <td>{{ entity.sdn_type|default:"Not specified" }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Federal Register Notice</th>
+                                    <td>{{ entity.federal_register_notice|default:"Not available" }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Start Date</th>
+                                    <td>{{ entity.start_date|default:"Not specified" }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">End Date</th>
+                                    <td>{{ entity.end_date|default:"Not specified" }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Added to Database</th>
+                                    <td>{{ entity.created_at }}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Last Updated</th>
+                                    <td>{{ entity.updated_at }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        {% if entity.programs %}
+                        <h4>Programs</h4>
+                        <div class="mb-3">
+                            {% for program in entity.programs %}
+                                <span class="badge bg-secondary mb-1">{{ program }}</span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                        
+                        {% if entity.alt_names %}
+                        <h4>Alternative Names</h4>
+                        <ul class="list-group mb-3">
+                            {% for alt_name in entity.alt_names %}
+                                <li class="list-group-item">{{ alt_name }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                        
+                        {% if entity.remarks %}
+                        <h4>Remarks</h4>
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                {{ entity.remarks|linebreaks }}
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="row">
+                    {% if entity.addresses.all %}
+                    <div class="col-md-6">
+                        <h4>Addresses</h4>
+                        <div class="list-group mb-3">
+                            {% for address in entity.addresses.all %}
+                                <div class="list-group-item">
+                                    {% if address.address %}{{ address.address }}<br>{% endif %}
+                                    {% if address.city %}{{ address.city }}{% endif %}
+                                    {% if address.state %}, {{ address.state }}{% endif %}
+                                    {% if address.postal_code %} {{ address.postal_code }}{% endif %}
+                                    {% if address.country %}<br>{{ address.country }}{% endif %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    {% if entity.ids.all %}
+                    <div class="col-md-6">
+                        <h4>Identification Information</h4>
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Number</th>
+                                    <th>Country</th>
+                                    <th>Issue/Expiration</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for id in entity.ids.all %}
+                                <tr>
+                                    <td>{{ id.id_type }}</td>
+                                    <td>{{ id.id_number }}</td>
+                                    <td>{{ id.id_country|default:"-" }}</td>
+                                    <td>
+                                        {% if id.issue_date %}Issue: {{ id.issue_date }}{% endif %}
+                                        {% if id.expiration_date %}<br>Exp: {{ id.expiration_date }}{% endif %}
+                                        {% if not id.issue_date and not id.expiration_date %}-{% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="card-footer">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <a href="{% url 'web:search' %}?q={{ entity.name }}" class="btn btn-outline-primary">Search Similar</a>
+                        <a href="javascript:history.back()" class="btn btn-outline-secondary">Back</a>
+                    </div>
+                    <div>
+                        {% if entity.source_information_url %}
+                        <a href="{{ entity.source_information_url }}" class="btn btn-outline-info" target="_blank">Source Information</a>
+                        {% endif %}
+                        {% if entity.source_list_url %}
+                        <a href="{{ entity.source_list_url }}" class="btn btn-outline-info" target="_blank">Source List</a>
+                        {% endif %}
+                        <a href="/api/v1/entities/{{ entity.id }}/" class="btn btn-outline-dark" target="_blank">API Data</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
