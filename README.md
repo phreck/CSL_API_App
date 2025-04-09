@@ -224,11 +224,7 @@ curl -X GET "http://localhost:8000/api/v1/entities/external_search/?q=smith"
 
 ## 🧪 Testing
 
-Run tests using pytest:
-
-```bash
-pytest
-```
+lol. Tests.
 
 ## 🤝 Contributing
 
