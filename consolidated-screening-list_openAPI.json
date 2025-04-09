@@ -1,0 +1,161 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "Consolidated Screening List",
+        "version": "v1",
+        "description": "The Consolidated Screening List API consolidates export screening lists of the Departments of Commerce, State and the Treasury into a single data feed as an aid to industry in conducting electronic screens of potential parties to regulated transactions.In the event that a company, entity or person on the list appears to match a party potentially involved in an export transaction, additional due diligence should be conducted before proceeding. There may be a strict export prohibition, requirement for seeking a license application, evaluation of the end-use or user to ensure it does not result in an activity prohibited by any U.S. export regulations, or other restriction. For more information view the informational video from the National Customs Brokers. The API only contains active entities on the list. For historical research, please reference the sources directly."
+    },
+    "host": "data.trade.gov",
+    "basePath": "/consolidated_screening_list/v1",
+    "schemes": [
+        "https"
+    ],
+    "securityDefinitions": {
+        "apiKeyHeader": {
+            "type": "apiKey",
+            "name": "subscription-key",
+            "in": "header"
+        },
+        "apiKeyQuery": {
+            "type": "apiKey",
+            "name": "subscription-key",
+            "in": "query"
+        }
+    },
+    "security": [
+        {
+            "apiKeyHeader": []
+        },
+        {
+            "apiKeyQuery": []
+        }
+    ],
+    "paths": {
+        "/search": {
+            "get": {
+                "description": "search",
+                "operationId": "search",
+                "summary": "search",
+                "parameters": [
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "Searches against the name and alt_names fields.",
+                        "type": "string"
+                    },
+                    {
+                        "name": "fuzzy_name",
+                        "in": "query",
+                        "description": "Set fuzzy_name=true to utilize fuzzy name matching. Fuzzy name matching enables users to query a name and get usable results without knowing the exact spelling of an entry. The fuzzy_name parameter only works in tandem with name. Fuzzy search filters out the following common words: co, company, corp, corporation, inc, incorporated, limited, ltd, mrs, ms, mr, organization, sa, sas, llc, university, and univ. For example, 'Water Corporation' returns the same results as 'Water' because 'Corporation' is one of the common words.",
+                        "type": "string",
+                        "enum": [
+                            "",
+                            "true"
+                        ]
+                    },
+                    {
+                        "name": "sources",
+                        "in": "query",
+                        "description": "Searches only the lists specified by the Source Abbreviation. <br /> <br /> Department of Commerce – Bureau of Industry and Security (BIS): <br /> * <b>DPL</b> - Denied Persons List <br /> * <b>EL</b> - Entity List <br /> * <b>MEU</b> - Military End User<br /> * <b>UVL</b> - Unverified List <br /> <br /> Department of State – Bureau of International Security and Non-Proliferation: <br /> * <b>ISN</b> - Nonproliferation Sanctions <br /> <br /> Department of State – Directorate of Defense Trade Controls: <br /> * <b>DTC</b> - ITAR Debarred <br /> <br /> Department of Treasury - Office of Foreign Assets Control: <br /> * <b>CAP</b> - Correspondent Account or Payable-Through Account Sanctions (CAPTA) <br /> * <b>CMIC</b> - Non-SDN Chinese Military-Industrial Complex Companies List - Treasury Department <br /> * <b>FSE</b> - Foreign Sanctions Evaders <br /> * <b>MBS</b> - Non-SDN Menu-Based Sanctions List (NS-MBS List) <br /> * <b>PLC</b> - Palestinian Legislative Council List <br /> * <b>SSI</b> - Sectoral Sanctions Identifications List <br /> * <b>SDN</b> - Specially Designated Nationals <br />",
+                        "type": "string",
+                        "enum": [
+                            "",
+                            "CAP",
+                            "CMIC",
+                            "DPL",
+                            "DTC",
+                            "EL",
+                            "FSE",
+                            "ISN",
+                            "MBS",
+                            "MEU",
+                            "PLC",
+                            "SDN",
+                            "SSI",
+                            "UVL"
+                        ]
+                    },
+                    {
+                        "name": "types",
+                        "in": "query",
+                        "description": "Searches only entries specified by the type.",
+                        "type": "string",
+                        "enum": [
+                            "",
+                            "Aircraft",
+                            "Entity",
+                            "Individual",
+                            "Vessel"
+                        ]
+                    },
+                    {
+                        "name": "countries",
+                        "in": "query",
+                        "description": "Searches only entities whose country, nationalities, or citizenships fields match the country code based on ISO alpha-2 country codes. The country fields are found in the addresses and ids arrays. This method allows you to search for multiple countries (plural) separated by commas but will only return one country (singular) per entity.",
+                        "type": "string"
+                    },
+                    {
+                        "name": "address",
+                        "in": "query",
+                        "description": "Searches against the address field in the addresses array.",
+                        "type": "string"
+                    },
+                    {
+                        "name": "city",
+                        "in": "query",
+                        "description": "Searches against the city field in the addresses array.",
+                        "type": "string"
+                    },
+                    {
+                        "name": "state",
+                        "in": "query",
+                        "description": "Searches against the state field in the addresses array.",
+                        "type": "string"
+                    },
+                    {
+                        "name": "postal_code",
+                        "in": "query",
+                        "description": "Searches against the postal field in the addresses array.",
+                        "type": "string"
+                    },
+                    {
+                        "name": "full_address",
+                        "in": "query",
+                        "description": "Searches against address, city, state, and postal_code fields in the addresses array. If this parameter is present, individual address, city, state, and postal_code parameters will be ignored.",
+                        "type": "string"
+                    },
+                    {
+                        "name": "offset",
+                        "in": "query",
+                        "description": "The offset parameter defines the offset from the first result you want to fetch. This value cannot be greater than 1000.",
+                        "type": "string"
+                    },
+                    {
+                        "name": "size",
+                        "in": "query",
+                        "description": "The size parameter allows you to configure the number of results to be returned up to a maximum of 50.",
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "null"
+                    }
+                }
+            }
+        },
+        "/sources": {
+            "get": {
+                "operationId": "sources",
+                "summary": "sources",
+                "responses": {
+                    "200": {
+                        "description": null
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {},
+    "tags": []
+}
